@@ -7,7 +7,6 @@ from sklearn.preprocessing import LabelEncoder
 
 app = FastAPI()
 
-# Lovable-ൽ നിന്നും മറ്റ് വെബ്‌സൈറ്റുകളിൽ നിന്നും ഉള്ള റിക്വസ്റ്റുകൾ സ്വീകരിക്കാൻ (CORS Enable ചെയ്യൽ)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -16,13 +15,11 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Model-ഉം Dataset-ഉം Load ചെയ്യുന്നു
 model = pickle.load(open('car_model.pkl', 'rb'))
 df = pd.read_csv('cardekho_dataset.csv')
 if 'Unnamed: 0' in df.columns:
     df = df.drop(columns=['Unnamed: 0'])
 
-# Frontend-ൽ നിന്ന് വരുന്ന വിവരങ്ങളുടെ ഘടന (Data Format)
 class CarInput(BaseModel):
     brand: str
     model: str
@@ -38,7 +35,7 @@ class CarInput(BaseModel):
 
 @app.get("/")
 def home():
-    return {"status": "Car Price Prediction API is Live!"}
+    return {"status": "API is running successfully!"}
 
 @app.post("/predict")
 def predict_price(car: CarInput):
@@ -54,7 +51,6 @@ def predict_price(car: CarInput):
         'mileage', 'engine', 'max_power', 'seats'
     ])
     
-    # Label Encoding
     for col in ['car_name', 'brand', 'model', 'seller_type', 'fuel_type', 'transmission_type']:
         le = LabelEncoder()
         le.fit(df[col].astype(str))
